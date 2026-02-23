@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Skill Swap</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+  
+  <div class="container mt-4">
+    <h1 class="mb-4">Search Users</h1>
+    
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="input-group">
+          <input 
+            type="text" 
+            class="form-control" 
+            id="searchInput"
+            placeholder="Search by name or skills..." 
+            value="<%= searchTerm %>"
+          >
+        </div>
+        <small class="text-muted">Search updates live without page refresh</small>
+      </div>
+    </div>
+    
+    <div id="userResults">
+      <% if (searchResults.length === 0 && searchTerm) { %>
+        <div class="alert alert-info">No users found matching "<%= searchTerm %>"</div>
+      <% } else if (searchResults.length > 0) { %>
+        <% searchResults.forEach(resultUser => { %>
+          <div class="user-card card mb-3" 
+               data-user-id="<%= resultUser.id %>"
+               data-name="<%= resultUser.name %>"
+               data-skills-teach="<%= resultUser.skills_teach || '' %>"
+               data-skills-learn="<%= resultUser.skills_learn || '' %>"
+               data-is-online="<%= resultUser.is_online %>">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                  <div class="avatar-circle-small mx-auto">
+                    <%= resultUser.name.charAt(0).toUpperCase() %>
+                  </div>
+                </div>
+                <div class="col-md-7">
+                  <h5 class="mb-1">
+                    <%= resultUser.name %>
+                    <span class="online-badge badge <%= resultUser.is_online ? 'bg-success' : 'bg-secondary' %> ms-2">
+                      <%= resultUser.is_online ? '● Online' : '○ Offline' %>
+                    </span>
+                  </h5>
+                  <p class="text-muted mb-1"><small><%= resultUser.email %></small></p>
+                  <% if (resultUser.average_rating > 0) { %>
+                    <div class="rating-stars">
+                      <% for(let i = 1; i <= 5; i++) { %>
+                        <%= i <= Math.round(resultUser.average_rating) ? '★' : '☆' %>
+                      <% } %>
+                      <small class="text-muted">(<%= resultUser.rating_count %> <%= resultUser.rating_count === 1 ? 'rating' : 'ratings' %>)</small>
+                    </div>
+                  <% } %>
+                  <% if (resultUser.skills_teach) { %>
+                    <p class="mb-1"><small><strong class="text-success">Teaches:</strong> <%= resultUser.skills_teach %></small></p>
+                  <% } %>
+                  <% if (resultUser.skills_learn) { %>
+                    <p class="mb-0"><small><strong class="text-primary">Wants to learn:</strong> <%= resultUser.skills_learn %></small></p>
+                  <% } %>
+                </div>
+                <div class="col-md-3 text-end">
+                  <a href="/user/<%= resultUser.id %>" class="btn btn-primary btn-sm w-100">View Profile</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <div class="text-center text-muted py-5">
+          <p>Start typing to search for users</p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+  
+  <%- include('partials/footer') %>
+  
+  <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>const socket = io();</script>
+  <script src="/js/search.js"></script>
+</body>
+</html>

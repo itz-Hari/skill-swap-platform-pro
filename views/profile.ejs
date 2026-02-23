@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Skill Swap</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <%- include('partials/navbar') %>
+  
+  <div class="container mt-4">
+    <% if (messages.success && messages.success.length > 0) { %>
+      <div class="alert alert-success alert-dismissible fade show">
+        <%= messages.success %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% } %>
+    
+    <% if (messages.error && messages.error.length > 0) { %>
+      <div class="alert alert-danger alert-dismissible fade show">
+        <%= messages.error %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    <% } %>
+    
+    <div class="row">
+      <div class="col-lg-4 mb-4">
+        <div class="card">
+          <div class="card-body text-center">
+            <div class="profile-avatar mb-3">
+              <div class="avatar-circle">
+                <%= user.name.charAt(0).toUpperCase() %>
+              </div>
+            </div>
+            <h4><%= user.name %></h4>
+            <p class="text-muted"><%= user.email %></p>
+            <p class="text-muted"><small>Member since <%= new Date(user.created_at).toLocaleDateString() %></small></p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">Edit Profile</h5>
+          </div>
+          <div class="card-body">
+            <% if (errors.length > 0) { %>
+              <div class="alert alert-danger">
+                <ul class="mb-0">
+                  <% errors.forEach(error => { %>
+                    <li><%= error.msg %></li>
+                  <% }) %>
+                </ul>
+              </div>
+            <% } %>
+            
+            <form action="/profile" method="POST">
+              <div class="mb-3">
+                <label for="bio" class="form-label">Bio</label>
+                <textarea 
+                  class="form-control" 
+                  id="bio" 
+                  name="bio" 
+                  rows="3"
+                  maxlength="500"
+                  placeholder="Tell others about yourself..."
+                ><%= profile ? profile.bio : '' %></textarea>
+                <small class="form-text text-muted">Maximum 500 characters</small>
+              </div>
+              
+              <div class="mb-3">
+                <label for="skills_teach" class="form-label">Skills I Can Teach</label>
+                <textarea 
+                  class="form-control" 
+                  id="skills_teach" 
+                  name="skills_teach" 
+                  rows="3"
+                  maxlength="300"
+                  placeholder="e.g., Web Development, Guitar, Spanish, Cooking..."
+                  required
+                ><%= profile ? profile.skills_teach : '' %></textarea>
+                <small class="form-text text-muted">Separate skills with commas. Maximum 300 characters</small>
+              </div>
+              
+              <div class="mb-3">
+                <label for="skills_learn" class="form-label">Skills I Want to Learn</label>
+                <textarea 
+                  class="form-control" 
+                  id="skills_learn" 
+                  name="skills_learn" 
+                  rows="3"
+                  maxlength="300"
+                  placeholder="e.g., Photography, Python, German, Yoga..."
+                  required
+                ><%= profile ? profile.skills_learn : '' %></textarea>
+                <small class="form-text text-muted">Separate skills with commas. Maximum 300 characters</small>
+              </div>
+              
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+          </div>
+        </div>
+        
+        <% if (profile && profile.skills_teach && profile.skills_learn) { %>
+          <div class="card mt-4">
+            <div class="card-header">
+              <h5 class="mb-0">Profile Preview</h5>
+            </div>
+            <div class="card-body">
+              <% if (profile.bio) { %>
+                <div class="mb-3">
+                  <h6>About Me</h6>
+                  <p><%= profile.bio %></p>
+                </div>
+              <% } %>
+              
+              <div class="mb-3">
+                <h6>Can Teach</h6>
+                <p class="text-success"><%= profile.skills_teach %></p>
+              </div>
+              
+              <div>
+                <h6>Want to Learn</h6>
+                <p class="text-primary"><%= profile.skills_learn %></p>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  
+  <%- include('partials/footer') %>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
